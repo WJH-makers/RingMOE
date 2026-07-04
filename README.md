@@ -13,9 +13,26 @@
 
 ## 📋 Overview
 
-RingMoE is a large-scale **Mixture-of-Experts (MoE)** pre-training and evaluation framework for **remote sensing imagery**, built for **Ascend 910B** clusters with MindSpore. It includes a **PyTorch/DeepSpeed refactor** for NVIDIA A100/H100 GPUs.
+RingMoE is a **Mixture-of-Experts (MoE)** pre-training framework for **remote sensing imagery**, built for Ascend 910B (MindSpore) with a PyTorch/DeepSpeed port for NVIDIA GPUs. Supports 4 paradigms of parallelism — data, model, expert (MoE), and pipeline — with MAE, SimMIM, and RingMo architectures.
 
-Supports data/model/expert/pipeline parallelism with architectures including MAE, SimMIM, and RingMo.
+> **Why RingMoE?** Remote sensing images demand high-resolution, multi-scale feature extraction that dense models cannot afford. MoE activates only relevant experts per token, scaling model capacity without proportional compute.
+
+## 🚀 Quick Start
+
+### MindSpore (Ascend 910B)
+
+```bash
+# 8-card distributed pre-training
+bash scripts/pretrain_distribute.sh ./rank_table_8pcs.json ./config/simmim_pcl/pretrain_simmim_swinv2_giant_p4_w12_aircas_192_200ep_moe_mm.yaml
+```
+
+### PyTorch (NVIDIA A100)
+
+```bash
+cd pytorch_refactor
+pip install -r requirements.txt
+python train.py --config ../config/simmim_pcl/...
+```
 
 ## ✨ Key Features
 
@@ -47,23 +64,6 @@ RingMoE/
 ├── pretrain.py                 # MindSpore pre-training entry
 ├── finetune.py                 # MindSpore fine-tuning entry
 └── eval.py                     # MindSpore evaluation entry
-```
-
-## 🚀 Quick Start
-
-### MindSpore (Ascend 910B)
-
-```bash
-# Pre-training with 8 cards
-bash scripts/pretrain_distribute.sh ./rank_table_8pcs.json ./config/simmim_pcl/pretrain_simmim_swinv2_giant_p4_w12_aircas_192_200ep_moe_mm.yaml
-```
-
-### PyTorch (NVIDIA A100)
-
-```bash
-cd pytorch_refactor
-pip install -r requirements.txt
-python train.py --config ../config/simmim_pcl/...
 ```
 
 ## 📦 Requirements

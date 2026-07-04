@@ -1,53 +1,84 @@
-# RingMoE
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=180&section=header&text=RingMoE&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Large-Scale%20MoE%20Pre-training%20for%20Remote%20Sensing&descAlignY=55&descAlign=50" width="100%" />
+</p>
 
-RingMoE 是一个基于 MindSpore 框架的大规模混合专家（MoE）模型预训练和下游任务评估代码库。它专为 Ascend 910B 集群设计，支持高效的分布式训练。
+<p align="center">
+  <img src="https://img.shields.io/badge/MindSpore-2.1.0-blue?style=flat-square&logo=mindspore" />
+  <img src="https://img.shields.io/badge/PyTorch-2.1.0-ee4c2c?style=flat-square&logo=pytorch" />
+  <img src="https://img.shields.io/badge/DeepSpeed-Available-000?style=flat-square" />
+  <img src="https://img.shields.io/badge/Ascend_910B-Supported-00A1E9?style=flat-square" />
+  <img src="https://img.shields.io/badge/NVIDIA_A100-Refactored-76B900?style=flat-square" />
+  <img src="https://img.shields.io/badge/Python-3.7%2B-3776AB?style=flat-square&logo=python" />
+</p>
 
-## 主要特性
+## 📋 Overview
 
-*   **大规模并行**: 支持数据并行、模型并行、专家并行（Expert Parallel）和流水线并行。
-*   **多模型支持**: 内置 MAE, SimMIM, RingMo 等多种架构及其 MoE 变体。
-*   **高性能**: 针对 Ascend 910B 硬件进行深度优化，支持图模式和重计算。
-*   **开箱即用**: 提供完整的预训练、微调和评估脚本。
+RingMoE is a large-scale **Mixture-of-Experts (MoE)** pre-training and evaluation framework for **remote sensing imagery**, built for **Ascend 910B** clusters with MindSpore. It includes a **PyTorch/DeepSpeed refactor** for NVIDIA A100/H100 GPUs.
 
-## 快速开始
+Supports data/model/expert/pipeline parallelism with architectures including MAE, SimMIM, and RingMo.
 
-详细的新手入门教程请查阅 [TUTORIAL.md](./TUTORIAL.md)。
+## ✨ Key Features
 
-## Linux + NVIDIA A100（PyTorch/DeepSpeed 重构版）
+- **Multi-Paradigm Parallelism**: Data parallel, model parallel, expert parallel (MoE), pipeline stages
+- **Rich Architectures**: ViT, Swin, SwinV2 backbones with MAE/SimMIM/RingMo pre-training tasks
+- **MoE Variants**: Multi-modal routing, single-expert routing, configurable expert counts
+- **Cross-Platform**: MindSpore (Ascend 910B) + PyTorch/DeepSpeed (NVIDIA A100/H100) refactor
+- **Downstream Tasks**: Classification, segmentation, detection via mmdetection/mmpretrain/mmseg
 
-本仓库包含一份面向 **NVIDIA A100/H100** 的 **PyTorch/DeepSpeed** 重构实现，位于 `pytorch_refactor/`。
+## 🏗️ Architecture
 
-- 运行指南：`RUNNING_LINUX_A100.md`
-- 代码入口：`pytorch_refactor/train.py`
-
-### 环境要求
-
-*   **硬件**: Ascend 910B
-*   **框架**: MindSpore 2.1.0+
-*   **依赖**: CANN 6.3.RC2, Python 3.7+
-
-### 运行预训练
-
-```bash
-cd scripts
-# 使用 8 卡分布式训练示例
-bash pretrain_distribute.sh ./rank_table_8pcs.json ./config/simmim_pcl/pretrain_simmim_swinv2_giant_p4_w12_aircas_192_200ep_moe_mm.yaml
+```
+RingMoE/
+├── ringmoe_framework/          # Core framework (MindSpore)
+│   ├── arch/                   # Pre-training tasks (MAE, SimMIM, RingMo, MoE variants)
+│   ├── datasets/               # Data loaders, mask strategies, MindRecord tools
+│   ├── models/                 # Backbones (ViT/Swin/SwinV2), MoE layers, core ops
+│   ├── trainer/                # TrainOneStep (loss scale, clip grad, EMA)
+│   ├── optim/                  # Optimizers (AdamW, AdamWOP)
+│   ├── lr/                     # LR schedules (warmup, cosine, multistep)
+│   ├── tools/                  # Context init, checkpoint utils, HCCL tools
+│   └── monitors/               # Callbacks & monitoring
+├── pytorch_refactor/           # PyTorch/DeepSpeed A100 port
+│   ├── train.py                # Training entry point
+│   ├── model.py                # SwinTransformerV2MoE, SimMIM, MultiModal models
+│   └── dataset.py              # RingMoEDataset
+├── config/                     # YAML configuration system
+├── scripts/                    # Distributed launch scripts
+├── pretrain.py                 # MindSpore pre-training entry
+├── finetune.py                 # MindSpore fine-tuning entry
+└── eval.py                     # MindSpore evaluation entry
 ```
 
-## 目录结构
+## 🚀 Quick Start
 
-*   `config/`: 模型与训练配置文件
-*   `ringmoe_framework/`: 框架核心源码（包含 arch, datasets, models, loss, optim 等）
-*   `scripts/`: 分布式启动脚本
-*   `pretrain.py` / `finetune.py`: 训练入口文件
+### MindSpore (Ascend 910B)
 
-## 推荐的环境
+```bash
+# Pre-training with 8 cards
+bash scripts/pretrain_distribute.sh ./rank_table_8pcs.json ./config/simmim_pcl/pretrain_simmim_swinv2_giant_p4_w12_aircas_192_200ep_moe_mm.yaml
+```
 
-- `requirements-a100.txt`: stable PyTorch/cu118 stack (torch 2.1.0 + torchvision 0.16.0, numpy 1.26.4, timm/einops, scipy/pillow). Use this for `pytorch_refactor/` and `train_a100.py`.
-- `requirements-isaid.txt`: iSAID/MMDet stack matching the one-click scripts (torch 2.1.0 + cu118, mmcv 2.1.0, mmdet 3.3.0, mmengine 0.10.7, numpy 1.26.4, opencv-python-headless 4.10.0.84).
+### PyTorch (NVIDIA A100)
 
-在需要 cu121 而不是 cu118 的系统上，需一致地更换 extra-index URL 和 `+cu118` 后缀。
+```bash
+cd pytorch_refactor
+pip install -r requirements.txt
+python train.py --config ../config/simmim_pcl/...
+```
 
-## 许可证
+## 📦 Requirements
 
-请查看项目内的 LICENSE 文件。
+| Environment | Framework | Hardware |
+|------------|-----------|----------|
+| Production | MindSpore 2.1.0+ | Ascend 910B |
+| Refactor | PyTorch 2.1.0 + CUDA 11.8 | NVIDIA A100/H100 |
+
+## 🎓 Academic Context
+
+This project was developed as part of research at **Wuhan University**, School of Computer Science, focusing on remote sensing foundation models.
+
+---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:764ba2,100:667eea&height=100&section=footer" width="100%" />
+</p>

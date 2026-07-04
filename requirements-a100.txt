@@ -1,0 +1,12 @@
+# Stable A100/H100 PyTorch stack (cu118). Switch index/pins if you intentionally use cu121.
+--extra-index-url https://download.pytorch.org/whl/cu118
+
+torch==2.1.0+cu118
+torchvision==0.16.0+cu118
+deepSpeed==0.10.0
+timm==0.9.12
+einops==0.7.0
+numpy==1.26.4
+pillow==10.2.0
+scipy==1.11.4
+

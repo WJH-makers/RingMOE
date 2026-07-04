@@ -1,0 +1,9 @@
+torch>=2.0.0
+torchvision
+deepspeed>=0.10.0
+timm
+einops
+numpy
+Pillow
+scipy
+

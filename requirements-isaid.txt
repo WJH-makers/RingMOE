@@ -1,0 +1,11 @@
+# Stable iSAID/MMDet stack, matching one_click_isaid_maskrcnn scripts.
+--extra-index-url https://download.pytorch.org/whl/cu118
+
+numpy==1.26.4
+torch==2.1.0+cu118
+torchvision==0.16.0+cu118
+opencv-python-headless==4.10.0.84
+mmengine==0.10.7
+mmcv==2.1.0
+mmdet==3.3.0
+

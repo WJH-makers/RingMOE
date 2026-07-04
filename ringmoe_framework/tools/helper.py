@@ -39,7 +39,8 @@ def build_context(args):
     # context.set_auto_parallel_context(
     #     dataset_strategy=((device_num, 1, 1, 1), (device_num, 1, 1, 1), (device_num, 1), (device_num, 1)))
 
-    context.set_context(max_device_memory="31GB")
+    max_mem = os.getenv("RINGMOE_MAX_DEVICE_MEMORY", "31GB")
+    context.set_context(max_device_memory=max_mem)
     # context.set_context(save_graphs=2, save_graphs_path="/home/ma-user/modelarts/outputs/modelArts_output_0/")
     # comm_fusion_config = {
     #     "allreduce": {"mode": "size", "config": 256},

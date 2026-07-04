@@ -92,22 +92,6 @@ class LossMonitor(Callback):
                 int(epoch_num) + int(self.has_trained_epoch), cb_params.cur_step_num + int(self.has_trained_step), loss, step_seconds))
 
 
-        # cb_params = run_context.original_args()
-        #
-        # step_seconds = (time.time() - self.step_time) * 1000
-        #
-        # loss = get_net_outputs(cb_params.net_outputs)
-        #
-        # cur_step_in_epoch = (cb_params.cur_step_num - 1) % cb_params.batch_num + 1
-        #
-        # if isinstance(loss, float) and (np.isnan(loss) or np.isinf(loss)):
-        #     raise ValueError('epoch: {} step: {}. Invalid loss, terminating training.'.format(
-        #         cb_params.cur_epoch_num, cur_step_in_epoch))
-        # if self._per_print_times != 0 and (cb_params.cur_step_num - self._last_print_time) >= self._per_print_times:
-        #     self._last_print_time = cb_params.cur_step_num
-        #     self.log.info('epoch: {} step: {}, loss is {}; per step time: {:5.3f} ms'.format(
-        #         cb_params.cur_epoch_num, cur_step_in_epoch, loss, step_seconds))
-
 def checkpoint_monitor(directory=None,local_rank=None, prefix='CKP', **kwargs):
     """Save checkpoint in training for network."""
     # rank_id = int(os.getenv('RANK_ID', '0'))

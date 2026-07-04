@@ -135,7 +135,12 @@ class RingMoEClassFactory:
                 "Can't find class. class type = {}".format(class_name)
             )
 
-        register_class = cls.registry.get(module_type).get(class_name)
+        module_registry = cls.registry.get(module_type)
+        if module_registry is None:
+            raise KeyError(f"Module type '{module_type}' not registered. Available: {list(cls.registry.keys())}")
+        register_class = module_registry.get(class_name)
+        if register_class is None:
+            raise KeyError(f"Class '{class_name}' not found in module type '{module_type}'")
         return register_class
 
     @classmethod

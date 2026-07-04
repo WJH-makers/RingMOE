@@ -16,6 +16,7 @@
 import json
 import os
 import socket
+import subprocess
 import sys
 from argparse import ArgumentParser
 from typing import Dict, Any
@@ -112,7 +113,10 @@ def main():
     device_ips: Dict[Any, Any] = {}
     try:
         for device_id in device_num_list:
-            ret = os.popen("hccn_tool -i %d -ip -g" % device_id).readlines()
+            ret = subprocess.Popen(
+                ["hccn_tool", "-i", str(device_id), "-ip", "-g"],
+                stdout=subprocess.PIPE, text=True
+            ).communicate()[0].splitlines()
             device_ips[str(device_id)] = ret[0].split(":")[1].replace('\n', '')
     except IndexError:
         print("Failed to call hccn_tool, try to read /etc/hccn.conf instead")

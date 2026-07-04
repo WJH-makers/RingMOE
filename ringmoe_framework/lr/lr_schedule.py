@@ -40,7 +40,8 @@ class WarmUpCosineDecayV1(LearningRateSchedule):
                                 for i in range(warmup_steps + decay_steps)])
 
     def construct(self, global_step):
-        return self.schedule[global_step]
+        idx = min(global_step, self.schedule.shape[0] - 1)
+        return self.schedule[idx]
 
 
 class MultiEpochsDecayLR(LearningRateSchedule):  # for simmim vit.
@@ -95,7 +96,8 @@ class WarmUpLR(LearningRateSchedule):
             np.linspace(start_warmup_value, base_lr, warmup_steps), mstype.float32)
 
     def construct(self, global_step):
-        return self.warmup_schedule[global_step]
+        idx = min(global_step, self.warmup_schedule.shape[0] - 1)
+        return self.warmup_schedule[idx]
 
 
 class CosineDecayLR(LearningRateSchedule):
@@ -106,7 +108,8 @@ class CosineDecayLR(LearningRateSchedule):
              for i in range(decay_steps)], mstype.float32)
 
     def construct(self, global_step):
-        return self.cosine_schedule[global_step]
+        idx = min(global_step, self.cosine_schedule.shape[0] - 1)
+        return self.cosine_schedule[idx]
 
 
 def lr_adjust(max_lr, min_lr, step, warmup_steps, decay_steps, start_warmup_value=0.):
@@ -206,7 +209,8 @@ class WarmUpCosineDecayV2(LearningRateSchedule):
         return int(math.floor(-self.t_initial * (self.cycle_mul ** cycles - 1) / (1 - self.cycle_mul)))
 
     def construct(self, global_step):
-        return self.lr_tensor[global_step][0]
+        idx = min(global_step, self.lr_tensor.shape[0] - 1)
+        return self.lr_tensor[idx][0]
         # return self.get_epoch_values(global_step)
 
 

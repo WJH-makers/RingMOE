@@ -14,6 +14,7 @@
 # ============================================================================
 """eval of ringmoe_framework"""
 import argparse
+import logging
 import os
 
 from register import RingMoEConfig, ActionDict
@@ -40,9 +41,11 @@ def _aicc_monitor(fn):
 def _maybe_obs_register(ac) -> None:
     if ac is None:
         return
-    obs_ak = os.environ.get("RINGMOE_OBS_AK")
-    obs_sk = os.environ.get("RINGMOE_OBS_SK")
+    obs_ak = os.environ.get("RINGMOE_OBS_AK") or ""
+    obs_sk = os.environ.get("RINGMOE_OBS_SK") or ""
     obs_server = os.environ.get("RINGMOE_OBS_SERVER", "")
+    if not obs_ak or not obs_sk:
+        logging.warning("OBS credentials not set (RINGMOE_OBS_AK/SK). Cloud features disabled.")
     if obs_ak and obs_sk and obs_server:
         ac.obs_register(ak=obs_ak, sk=obs_sk, server=obs_server)
 

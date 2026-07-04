@@ -215,7 +215,7 @@ class ActionDict(Action):
         except ValueError:
             pass
         if val.upper() in ['TRUE', 'FALSE']:
-            return val.upper == 'TRUE'
+            return val.upper() == 'TRUE'
         return val
 
     @staticmethod

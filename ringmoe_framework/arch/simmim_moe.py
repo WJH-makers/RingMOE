@@ -72,8 +72,13 @@ class SwinTransformerForSimMIM_Moe(SwinTransformer):
         x = self.pos_drop(x)
 
         aux_loss = 0.
-        for layer in self.layers:
-            x = layer(x)
+        if self.use_moe:
+            for layer in self.layers:
+                x, layer_aux = layer(x)
+                aux_loss += layer_aux
+        else:
+            for layer in self.layers:
+                x = layer(x)
 
         x = self.norm(x)
         x = self.transpose(x, (0, 2, 1))

@@ -30,11 +30,6 @@ _grad_scale = C.MultitypeFuncGraph("grad_scale")
 reciprocal = P.Reciprocal()
 shard_grad_scale = C.MultitypeFuncGraph("shard_grad_scale")
 
-@_grad_scale.register("Tensor", "Tensor")
-def tensor_grad_scale(scale, grad):
-    return grad * F.cast(reciprocal(scale), F.dtype(grad))
-
-
 @_grad_scale.register("Tensor", "RowTensor")
 def tensor_grad_scale_row_tensor(scale, grad):
     return RowTensor(grad.indices,
@@ -202,7 +197,8 @@ def build_wrapper(args, net_with_loss, optimizer, log=logger):
         # # train_model = nn.PipelineCell(train_model, 4)
         # net_with_loss = PipelineCell(net_with_loss, args.parallel_config.micro_batch_num)
 
-        net_with_loss = PipelineCell(MicroBatchInterleaved(net_with_loss, 1), args.parallel_config.micro_batch_num)
+        micro_size = args.parallel_config.micro_batch_num
+        net_with_loss = PipelineCell(MicroBatchInterleaved(net_with_loss, micro_size), micro_size)
         net_with_loss = _VirtualDatasetCell(net_with_loss)
         net_with_loss = TrainPipelineWithClipGNAndEMA(
             net_with_loss, optimizer, config=args, use_clip_grad=train_wrapper_config.use_clip_grad,

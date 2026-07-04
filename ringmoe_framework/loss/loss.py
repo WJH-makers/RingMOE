@@ -22,6 +22,7 @@ from mindspore.common import dtype as mstype
 from mindspore.nn.loss.loss import LossBase
 from mindspore.nn.loss import CrossEntropyLoss
 # from mindspore.nn.transformer.loss import CrossEntropyLoss
+import copy
 from mindspore.ops import functional as F
 
 
@@ -40,8 +41,9 @@ class InfoNceLoss(nn.Cell):
         self.n_views = n_views
         self.norm = P.L2Normalize(axis=-1).shard(((dp, 1),))
         self.matmul = P.MatMul(transpose_b=True).shard(((dp, 1), (mp, 1)))
-        parallel_config.model_parallel = 1
-        self.cross_entropy = CrossEntropyLoss(parallel_config=parallel_config)
+        local_config = copy.deepcopy(parallel_config)
+        local_config.model_parallel = 1
+        self.cross_entropy = CrossEntropyLoss(parallel_config=local_config)
         self.reshape = P.Reshape()
         self.gather = P.GatherNd().shard(((1, 1), (1, 1)))
         self.cat = P.Concat(axis=2).shard(((1, 1, 1), (1, 1, 1)))

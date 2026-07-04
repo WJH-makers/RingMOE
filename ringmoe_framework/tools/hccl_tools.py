@@ -137,6 +137,8 @@ def main():
     device_list = []
     rank_id = 0
     for instance_id in device_num_list:
+        if instance_id >= len(visible_devices):
+            raise ValueError(f"instance_id {instance_id} out of range for visible_devices (len={len(visible_devices)})")
         device_id = visible_devices[instance_id]
         device_ip = device_ips[device_id]
         device = {'device_id': device_id,

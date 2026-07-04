@@ -27,6 +27,7 @@ import mindspore.common.dtype as mstype
 from ringmoe_framework.trainer.ema import EMACell
 from mindspore.nn.wrap.cell_wrapper import PipelineCell, MicroBatchInterleaved, _VirtualDatasetCell
 _grad_scale = C.MultitypeFuncGraph("grad_scale")
+_accu_grads = C.MultitypeFuncGraph("accu_grads")
 reciprocal = P.Reciprocal()
 shard_grad_scale = C.MultitypeFuncGraph("shard_grad_scale")
 
@@ -39,6 +40,11 @@ def tensor_grad_scale_row_tensor(scale, grad):
 @_grad_scale.register("Tensor", "Tensor")
 def tensor_grad_scale(scale, grad):
     return grad * P.Cast()(reciprocal(scale), F.dtype(grad))
+
+
+@_accu_grads.register("Tensor", "Tensor")
+def tensor_accu_grads(accu_grad, grad):
+    return F.assign(accu_grad, accu_grad + grad)
 
 
 @_grad_scale.register("Tensor", "Tensor", "Tensor")
@@ -154,8 +160,9 @@ class TrainPipelineWithClipGNAndEMA(nn.TrainOneStepWithLossScaleCell):
             grads = self.grad_reducer(grads)
             grads = self.hyper_map(F.partial(shard_grad_scale, scaling_sens), grads, self.accu_grads)
         else:
-            accu_grads = self.grad_reducer(self.accu_grads)
-            grads = self.hyper_map(F.partial(_grad_scale, scaling_sens), grads, accu_grads)
+            grads = self.grad_reducer(grads)
+            grads = self.hyper_map(F.partial(_grad_scale, scaling_sens), grads)
+            self.accu_grads = self.hyper_map(F.partial(_accu_grads), self.accu_grads, grads)
 
         # grads = self.hyper_map(F.partial(_grad_scale, scaling_sens), grads)
         # # apply grad reducer on grads

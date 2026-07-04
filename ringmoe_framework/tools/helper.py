@@ -40,7 +40,11 @@ def build_context(args):
     #     dataset_strategy=((device_num, 1, 1, 1), (device_num, 1, 1, 1), (device_num, 1), (device_num, 1)))
 
     max_mem = os.getenv("RINGMOE_MAX_DEVICE_MEMORY", "31GB")
-    context.set_context(max_device_memory=max_mem)
+    try:
+        context.set_context(max_device_memory=max_mem)
+    except ValueError:
+        logger.warning(f"Invalid RINGMOE_MAX_DEVICE_MEMORY value: {max_mem}, using default 31GB")
+        context.set_context(max_device_memory="31GB")
     # context.set_context(save_graphs=2, save_graphs_path="/home/ma-user/modelarts/outputs/modelArts_output_0/")
     # comm_fusion_config = {
     #     "allreduce": {"mode": "size", "config": 256},

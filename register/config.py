@@ -72,7 +72,7 @@ class RingMoEConfig(dict):
             attr of object that name is `key`
         """
         if key not in self:
-            return None
+            raise AttributeError(f"Config has no key '{key}'. Available: {list(self.keys())}")
 
         return self[key]
 

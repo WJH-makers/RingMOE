@@ -294,8 +294,6 @@ class SimMIM_Moe(nn.Cell):
 
 
         # self.mmcat_3N = MMConcat_3N(dp)
-        self.mmcat_4N = MMConcat_4N(dp)
-        self.mmsplit_4N = MMSplit_4N(dp)
         self.cat_4d = P.Concat(axis=0).shard(((dp, 1, 1, 1), (dp, 1, 1, 1)))
 
         self.expand_dim = P.ExpandDims().shard(((dp, 1, 1),))

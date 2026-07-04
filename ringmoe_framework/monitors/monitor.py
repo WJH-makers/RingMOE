@@ -49,12 +49,8 @@ class StateMonitor(Callback):
         cb_params = run_context.original_args()
         loss = cb_params.net_outputs
 
-        if isinstance(loss, (tuple, list)):
-            if isinstance(loss[0], Tensor) and isinstance(loss[0].asnumpy(), np.ndarray):
-                loss = loss[0]
-
-        if isinstance(loss, Tensor) and isinstance(loss.asnumpy(), np.ndarray):
-            loss = np.mean(loss.asnumpy())
+        if isinstance(loss, (tuple, list)) and len(loss) > 0:
+            loss = loss[0]
 
         self.loss = loss
 

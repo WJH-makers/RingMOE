@@ -88,6 +88,8 @@ class MoEConfig:
         Validator.check_positive_float(capacity_factor, "capacity_factor")
         Validator.check_positive_float(aux_loss_factor, "aux_loss_factor")
         Validator.check_positive_int(num_experts_chosen, "num_experts_chosen")
+        if num_experts_chosen < 1:
+            raise ValueError(f"num_experts_chosen must be >= 1, got {num_experts_chosen}")
         Validator.check_bool(group_wise_a2a, "group_wise_a2a")
         Validator.check_bool(comp_comm_parallel, "comp_comm_parallel")
         Validator.check_positive_int(comp_comm_parallel_degree, "comp_comm_parallel_degree")

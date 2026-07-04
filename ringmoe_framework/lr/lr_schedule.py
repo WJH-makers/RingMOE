@@ -36,12 +36,19 @@ class LearningRateWiseLayer(LearningRateSchedule):
 class WarmUpCosineDecayV1(LearningRateSchedule):
     def __init__(self, min_lr, max_lr, warmup_steps, decay_steps, start_warmup_value=0.):
         super(WarmUpCosineDecayV1, self).__init__()
-        self.schedule = Tensor([lr_adjust(max_lr, min_lr, i, warmup_steps, decay_steps, start_warmup_value)
-                                for i in range(warmup_steps + decay_steps)])
+        self.min_lr = min_lr
+        self.max_lr = max_lr
+        self.warmup_steps = warmup_steps
+        self.decay_steps = decay_steps
+        self.start_warmup_value = start_warmup_value
 
     def construct(self, global_step):
-        idx = min(global_step, self.schedule.shape[0] - 1)
-        return self.schedule[idx]
+        step = min(global_step, self.warmup_steps + self.decay_steps - 1)
+        if step < self.warmup_steps:
+            return self.max_lr * step / self.warmup_steps + self.start_warmup_value
+        decay_step = step - self.warmup_steps
+        cosine_decay = 0.5 * (1 + math.cos(math.pi * decay_step / self.decay_steps))
+        return self.min_lr + (self.max_lr - self.min_lr) * cosine_decay
 
 
 class MultiEpochsDecayLR(LearningRateSchedule):  # for simmim vit.

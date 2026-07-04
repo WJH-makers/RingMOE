@@ -71,7 +71,7 @@ class RingMoEClassFactory:
                     logging.warning(
                         "Duplicate class ({}) will be replaced.".format(class_name)
                     )
-                cls.registry[module_type][register_class.__name__] = register_class
+                cls.registry[module_type][class_name] = register_class
             return register_class
 
         return wrapper
@@ -93,7 +93,7 @@ class RingMoEClassFactory:
                 logging.warning(
                     "Duplicate class ({}) will be replaced.".format(class_name)
                 )
-            cls.registry[module_type][register_class.__name__] = register_class
+            cls.registry[module_type][class_name] = register_class
         return register_class
 
     @classmethod

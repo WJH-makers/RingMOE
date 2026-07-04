@@ -22,6 +22,7 @@ datasets/
 *.gz
 *.rar
 *.7z
+*.npy
 
 # Model weights
 *.safetensors
@@ -37,12 +38,22 @@ model.safetensors
 *.log
 *.jou
 *.pb
+binary/
 
 # Config with secrets
 obssync.sh
 summary.sh
 rank_table_*.json
 
+# Temp
+'@ +  + @'/
+_tmp_*/
+tmp/
+
 # OS
 .DS_Store
 Thumbs.db
+
+# CIFAR-10 data
+*_tmp_cifar10*/
+download_cache/

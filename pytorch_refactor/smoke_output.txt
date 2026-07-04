@@ -1,5 +1,0 @@
-C:\Users\wjh19\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch\functional.py:505: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\TensorShape.cpp:4319.)
-  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
-OK pytorch_refactor smoke test
-loss= 0.9154065251350403
-aux= 0.0

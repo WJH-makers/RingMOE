@@ -2,14 +2,12 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:667eea,100:764ba2&height=180&section=header&text=RingMoE&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Large-Scale%20MoE%20Pre-training%20for%20Remote%20Sensing&descAlignY=55&descAlign=50" width="100%" />
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/MindSpore-2.1.0-blue?style=flat-square&logo=mindspore" />
-  <img src="https://img.shields.io/badge/PyTorch-2.1.0-ee4c2c?style=flat-square&logo=pytorch" />
-  <img src="https://img.shields.io/badge/DeepSpeed-Available-000?style=flat-square" />
-  <img src="https://img.shields.io/badge/Ascend_910B-Supported-00A1E9?style=flat-square" />
-  <img src="https://img.shields.io/badge/NVIDIA_A100-Refactored-76B900?style=flat-square" />
-  <img src="https://img.shields.io/badge/Python-3.7%2B-3776AB?style=flat-square&logo=python" />
-</p>
+| Category | Stack |
+|----------|-------|
+| **Framework** | MindSpore 2.1, PyTorch 2.1 |
+| **Parallelism** | DeepSpeed, HCCL, expert/data/model/pipeline |
+| **Hardware** | Ascend 910B, NVIDIA A100/H100 |
+| **Language** | Python 3.7+ |
 
 ## 📋 Overview
 
@@ -72,6 +70,19 @@ RingMoE/
 |------------|-----------|----------|
 | Production | MindSpore 2.1.0+ | Ascend 910B |
 | Refactor | PyTorch 2.1.0 + CUDA 11.8 | NVIDIA A100/H100 |
+
+## ❓ FAQ
+
+| Question | Answer |
+|----------|--------|
+| **Can I train on a single GPU?** | Yes, but multi-GPU (8+) is recommended for MoE to balance expert placement. |
+| **How do I add a new model architecture?** | Add the backbone in `ringmoe_framework/models/`, register it in config, and create a pre-training task in `arch/`. |
+| **Which dataset format is used?** | MindRecord for Ascend; standard PyTorch Dataset class for the refactor. |
+
+## 🔗 See Also
+
+- [Router-MVP](/WJH-makers/router-mvp) — Learned agent routing, complementary distributed systems research
+- [C++ Compiler](/WJH-makers/compiler-C-PLUS-PLUS) — Compiler IR and computation graph concepts
 
 ## 🎓 Academic Context
 
